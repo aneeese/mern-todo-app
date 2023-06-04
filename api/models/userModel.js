@@ -6,9 +6,7 @@ const userSchema = new mongoose.Schema({
         requierd: [true, "Please add a name"]
     },
     image: {
-        name: String,
-        data: Buffer, 
-        contentType: String 
+        type: String,
     },
     email: {
         type: String,

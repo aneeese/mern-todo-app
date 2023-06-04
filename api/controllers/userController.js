@@ -7,8 +7,7 @@ const User = require("../models/userModel");
 // @route   POST /users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
-  const { originalname, buffer, mimetype } = req.file;
+  const { name, image, email, password } = req.body;
 
   if (!name || !email || !password) {
     res.status(400);
@@ -29,11 +28,7 @@ const registerUser = asyncHandler(async (req, res) => {
   // Create user
   const user = await new User({
     name,
-    image: {
-      name: originalname,
-      data: buffer,
-      contentType: mimetype,
-    },
+    image,
     email,
     password: hashedPassword,
   }).save();

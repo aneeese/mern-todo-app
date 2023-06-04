@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import useUserStore from "../app/store";
 
 function Dashboard() {
-  const base_url = 'https://mern-todo-app-production-3286.up.railway.app/';
+  const base_url = 'https://mern-todo-app-production-3286.up.railway.app';
   const [tasks, setTasks] = useState("");
   const [text, setText] = useState("");
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ function Dashboard() {
   }, [user, text, tasks]);
 
   const fetchData = async () => {
-    const response = await axios.get(`${base_url}tasks`, {
+    const response = await axios.get(`${base_url}/tasks`, {
         headers: { Authorization: `Bearer ${user?.token}` }});
     setTasks(response.data);
   };
@@ -38,7 +38,7 @@ function Dashboard() {
       },
     };
 
-    const response = await axios.post(`${base_url}tasks`, taskText, config);
+    const response = await axios.post(`${base_url}/tasks`, taskText, config);
     setTasks(response.data);
     setText("");
   };

@@ -73,15 +73,13 @@ function Dashboard() {
             sx={{
               width: 100,
               height: 100,
-              marginBottom: "0.5rem",
-              cursor: "pointer",
               borderColor: "black",
             }}
           />
         </label>
       </Box>
 
-      <section className="flex flex-col mb-8 px-5">
+      <section className="flex flex-col mb-5 px-5">
         <h6 className="flex justify-center font-semibold mb-4 text-2xl m-4">
           Welcome {user && user.name}
         </h6>

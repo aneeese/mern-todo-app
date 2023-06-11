@@ -18,11 +18,11 @@ This is a simple Todo app built in the MERN stack. It provides a user-friendly i
 
 Watch the application `demo`: ⤵️
 
-https://drive.google.com/file/d/1rAkVZlK71R5DgN9geGonAXedmVrqvEcW/view?usp=sharing
+https://drive.google.com/file/d/17WxiT3KXgJi1Gfyt6x7ffISHfehTgHp8/view?usp=sharing
 
 Visit the `deployed` version of the app. ⤵️
 
-https://647d1bd9af2e9e7dac6f1c4b--magnificent-conkies-d56bc2.netlify.app
+https://64865b04d2a28e64184b0e91--stately-kheer-76ca0d.netlify.app
 
 
 ## Installation

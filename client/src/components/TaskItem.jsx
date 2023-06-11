@@ -26,9 +26,9 @@ function TaskItem({ task, update }) {
         `${config.apiUrl}/tasks/${id}`,
         setHeader
       );
-      stopLoading();
-      console.log(response);
       update();
+      console.log(response);
+      stopLoading();
       toast.success("Deleted successfully.", { autoClose: 1000 });
     } catch (error) {
       stopLoading();
@@ -52,10 +52,10 @@ function TaskItem({ task, update }) {
         data,
         setHeader
       );
-      stopLoading();
-      console.log(response);
       update();
+      console.log(response);
       toast.success("Updated successfully.", { autoClose: 1000 });
+      stopLoading();
     } catch (error) {
       stopLoading();
       console.log(error.message);
@@ -67,7 +67,7 @@ function TaskItem({ task, update }) {
     <div className="w-full max-h-full bg-opacity-30 rounded-lg overflow-auto text-gray-700">
       <ul>
         <li
-          className={`bg-opacity-70 flex items-center p-2 rounded-full mb-3 ${
+          className={`bg-opacity-70 flex items-center p-2 rounded-full mb-3 h-12 px-4 ${
             task.completed ? "bg-red-400" : "bg-gray-300"
           }`}
         >
@@ -87,11 +87,11 @@ function TaskItem({ task, update }) {
             )}
 
             <span
-              className={`text-md ${
-                task.completed ? "line-through text-gray-700" : "none"
+              className={`${
+                task.completed ? "line-through text-gray-700" : ""
               }`}
             >
-              {task.task}
+              <h1>{task.task}</h1>
             </span>
             {task.completed && (
               <p className="text-md font-bold ml-2">
@@ -110,7 +110,7 @@ function TaskItem({ task, update }) {
             {loading ? (
               <Spinner />
             ) : (
-              <MdDeleteSweep className="hover:scale-90" color="red" size={21} />
+              <MdDeleteSweep className="hover:scale-90" color="red" size={25} />
             )}
           </span>
         </li>

@@ -60,6 +60,7 @@ function Register() {
           navigate("/login");
         }
       } catch (error) {
+        stopLoading();
         toast.error("Error. Email address already registered.");
       }
     }

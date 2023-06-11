@@ -2,45 +2,65 @@ import { useEffect, useState } from "react";
 import TaskItem from "../components/TaskItem";
 import { Avatar, Box } from "@mui/material";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import useUserStore from "../app/store";
+import Spinner from "../components/Spinner";
+import config from "../config/settings";
 
 function Dashboard() {
-  const base_url = 'https://mern-todo-app-production-3286.up.railway.app';
-  const [tasks, setTasks] = useState("");
+  const [tasks, setTasks] = useState({});
   const [text, setText] = useState("");
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
+  const startLoading = useUserStore((state) => state.startLoading);
+  const stopLoading = useUserStore((state) => state.stopLoading);
+  const loading = useUserStore((state) => state.loading);
 
   useEffect(() => {
-    if (!user) {
+    if (user) {
+      startLoading();
+      fetchData();
+      stopLoading();
+    } else {
       navigate("/login");
     }
-  }, [user]);
-
-  useEffect(() => {
-    fetchData();
-  }, [user, text, tasks]);
+  }, []);
 
   const fetchData = async () => {
-    const response = await axios.get(`${base_url}/tasks`, {
-        headers: { Authorization: `Bearer ${user?.token}` }});
-    setTasks(response.data);
+    try {
+      const response = await axios.get(`${config.apiUrl}/tasks`, {
+        headers: { Authorization: `Bearer ${user?.token}` },
+      });
+      setTasks(response.data);
+    } catch (error) {
+      console.log(error.message);
+      toast.error("Could not fetch the data.");
+    }
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const taskText = { user: user._id, task: text };
-    const config = {
-      headers: {
-        Authorization: `Bearer ${user?.token}`,
-        "Content-Type": "application/json",
-      },
-    };
+    try {
+      startLoading();
+      const taskText = { user: user._id, task: text };
+      const setHeader = {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+          "Content-Type": "application/json",
+        },
+      };
 
-    const response = await axios.post(`${base_url}/tasks`, taskText, config);
-    setTasks(response.data);
-    setText("");
+      await axios.post(`${config.apiUrl}/tasks`, taskText, setHeader);
+      stopLoading();
+      setText("");
+      toast.success("New item added.", { autoClose: 1000 });
+      fetchData();
+    } catch (error) {
+      stopLoading();
+      console.log(error.message);
+      toast.error("Please add some text to add.", { autoClose: 1000 });
+    }
   };
 
   return (
@@ -61,35 +81,45 @@ function Dashboard() {
         </label>
       </Box>
 
-      <section className="heading">
-        <h6>Welcome {user && user.name}</h6>
+      <section className="flex flex-col mb-8 px-5">
+        <h6 className="flex justify-center font-semibold mb-4 text-2xl m-4">
+          Welcome {user && user.name}
+        </h6>
       </section>
 
-      <section className="form">
+      <section className="w-1/2 mx-auto">
         <form onSubmit={onSubmit}>
-          <div className="form-group">
+          <div className="mb-4">
             <input
               type="text"
               name="text"
+              className="w-full px-4 py-2 border border-gray-300 rounded mb-4"
               id="text"
               placeholder="Add a item."
               value={text}
               onChange={(e) => setText(e.target.value)}
             />
           </div>
-          <div className="form-group">
-            <button className="btn btn-block" type="submit">
-              Add Task
-            </button>
+          <div className="mb-4">
+            {loading ? (
+              <Spinner />
+            ) : (
+              <button
+                type="submit"
+                className="w-full px-5 py-2 border border-black rounded bg-black text-white text-base font-bold cursor-pointer text-center mb-5 hover:scale-95"
+              >
+                Add Task
+              </button>
+            )}
           </div>
         </form>
       </section>
 
-      <section className="content">
+      <section className="w-1/2 mx-auto">
         {tasks.length > 0 ? (
-          <div className="tasks">
+          <div className="grid grid-cols-1 gap-1">
             {tasks.map((task) => (
-              <TaskItem key={task._id} task={task} />
+              <TaskItem key={task._id} task={task} update={fetchData} />
             ))}
           </div>
         ) : (

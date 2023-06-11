@@ -1,22 +1,30 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 const useUserStore = create((set) => ({
-  user: JSON.parse(localStorage.getItem('user')) || null,
+  user: JSON.parse(localStorage.getItem("user")) || null,
+  loading: false,
 
   setUser: (user) => {
     set({ user });
-    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(user));
   },
 
   clearUser: () => {
     set({ user: null });
-    localStorage.removeItem('user');
+    localStorage.removeItem("user");
   },
 
   logout: () => {
-    // Clear the user data
     set({ user: null });
-    localStorage.removeItem('user');
+    localStorage.removeItem("user");
+  },
+
+  startLoading: () => {
+    set({ loading: true });
+  },
+
+  stopLoading: () => {
+    set({ loading: false });
   },
 }));
 

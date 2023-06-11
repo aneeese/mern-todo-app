@@ -4,9 +4,16 @@ import { toast } from "react-toastify";
 import { FaUser } from "react-icons/fa";
 import { Avatar, Box } from "@mui/material";
 import axios from "axios";
+import useUserStore from "../app/store";
+import Spinner from "../components/Spinner";
+import config from "../config/settings";
 
 function Register() {
   const navigate = useNavigate();
+  const startLoading = useUserStore((state) => state.startLoading);
+  const stopLoading = useUserStore((state) => state.stopLoading);
+  const loading = useUserStore((state) => state.loading);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -33,32 +40,45 @@ function Register() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-
     if (password !== password2) {
       toast.error("Passwords do not match");
     } else {
       try {
-        const url = "https://mern-todo-app-production-3286.up.railway.app/users";
-        const response = await axios.post(url, { name, image, email, password });
-        navigate("/login");
+        startLoading();
+        const response = await axios.post(`${config.apiUrl}/users`, {
+          name,
+          image,
+          email,
+          password,
+        });
+        if (response.status == 201) {
+          stopLoading();
+          toast.success("Account created successfully.", {
+            autoClose: 1000,
+            closeOnClick: true,
+          });
+          navigate("/login");
+        }
       } catch (error) {
-        toast.error("Error. Invalid data.");
+        toast.error("Error. Email address already registered.");
       }
     }
   };
 
   return (
     <>
-      <section className="heading">
-        <h1>
+      <section className="flex flex-col mb-8 px-5">
+        <h1 className="flex justify-center font-bold mb-4 text-4xl m-4">
           <FaUser /> Register
         </h1>
-        <p>Please create an account</p>
+        <p className="leading-7 text-3xl font-semibold text-gray-500 m-2">
+          Please create an account
+        </p>
       </section>
 
-      <section className="form">
+      <section className="w-1/2 mx-auto pb-7">
         <form onSubmit={onSubmit}>
-          <div className="form-group">
+          <div className="mb-4">
             <Box display="flex" justifyContent="center" marginBottom="1rem">
               <label htmlFor="file-input">
                 <Avatar
@@ -85,10 +105,10 @@ function Register() {
               style={{ display: "none" }}
             />
           </div>
-          <div className="form-group">
+          <div className="mb-4">
             <input
               type="text"
-              className="form-control"
+              className="w-full px-4 py-2 border border-gray-300 rounded mb-4"
               id="name"
               name="name"
               value={name}
@@ -96,10 +116,10 @@ function Register() {
               onChange={onChange}
             />
           </div>
-          <div className="form-group">
+          <div className="mb-4">
             <input
               type="email"
-              className="form-control"
+              className="w-full px-4 py-2 border border-gray-300 rounded mb-4"
               id="email"
               name="email"
               value={email}
@@ -107,10 +127,10 @@ function Register() {
               onChange={onChange}
             />
           </div>
-          <div className="form-group">
+          <div className="mb-4">
             <input
               type="password"
-              className="form-control"
+              className="w-full px-4 py-2 border border-gray-300 rounded mb-4"
               id="password"
               name="password"
               value={password}
@@ -118,10 +138,10 @@ function Register() {
               onChange={onChange}
             />
           </div>
-          <div className="form-group">
+          <div className="mb-4">
             <input
               type="password"
-              className="form-control"
+              className="w-full px-4 py-2 border border-gray-300 rounded mb-4"
               id="password2"
               name="password2"
               value={password2}
@@ -129,10 +149,17 @@ function Register() {
               onChange={onChange}
             />
           </div>
-          <div className="form-group">
-            <button type="submit" className="btn btn-block">
-              Submit
-            </button>
+          <div className="mb-4">
+            {loading ? (
+              <Spinner />
+            ) : (
+              <button
+                type="submit"
+                className="w-full px-5 py-2 border border-black rounded bg-black text-white text-base font-bold cursor-pointer text-center mb-5 hover:scale-95"
+              >
+                Submit
+              </button>
+            )}
           </div>
         </form>
       </section>

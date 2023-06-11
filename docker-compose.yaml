@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  client:
+    build:
+      context: './client'
+      dockerfile: Dockerfile
+    ports:
+      - 5173:5173
+    container_name: client-container
+    environment:
+      - VITE_API_URL = 'https://mern-todo-app-production-3286.up.railway.app'
+    networks:
+      - mern-stack-network
+    volumes:
+      - ./client-docker:/app
+    depends_on:
+      - api
+  api:
+    build:
+      context: './api'
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    container_name: api-container
+    networks:
+      - mern-stack-network
+    volumes:
+      - ./api-docker:/app
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    container_name: mongo-container
+    networks:
+      - mern-stack-network
+    volumes:
+      - mongoData:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=todoapp
+networks:
+  mern-stack-network:
+volumes:
+  mongoData:
+
+
+
